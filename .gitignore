@@ -64,6 +64,7 @@ data/
 # OS
 .DS_Store
 Thumbs.db
+ACTIVE_CONTEXT.md
 
 # UV
 .uv/
