@@ -1,0 +1,18 @@
+[[34m2026-02-04 23:24:17[0m] Experiment directory : /data1/chenyuxuan/MHMLM/eval/drug_optim/eval_output/diffusion_sft/005-LDMol
+[[34m2026-02-04 23:24:17[0m] Initializing LDMolTrainer with config: {'dit': {'name': 'LDMol', 'latent_size': 127, 'in_channels': 64, 'cross_attn_dim': 768, 'condition_dim': 2048}, 'smiles_encoder': {'name': 'autoencoder', 'ckpt': '/data1/chenyuxuan/checkpoint/diffusion_pretrained/official/checkpoint_autoencoder.ckpt'}, 'text_encoder': {'name': 'qwen3_8b', 'ckpt': '/data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200/llm', 'hidden_dim': 4096, 'description_length': 256}, 'train': {'results_dir': './artifacts/results/ldmol-qwen_cpt_sft', 'data_paths': ['/data1/chenyuxuan/MHMLM/artifacts/data/ldmol/drug_optim/processed/train_mol_edit.txt'], 'ckpt': '/data1/chenyuxuan/checkpoint/diffusion_pretrained/ours/ldmol/ldmol_chatmol-qwen3_8b.pt', 'epochs': 300, 'global_batch_size': 96, 'learning_rate': 0.0001, 'unconditional_prob': 0.05, 'ema_decay': 0.9999, 'log_every': 100, 'ckpt_every': 5000}, 'infer': {'results_dir': 'TODO', 'data_paths': ['/data1/chenyuxuan/MHMLM/artifacts/data/ldmol/drug_optim/processed/test_t2m.txt'], 'ckpt': '/data1/chenyuxuan/MHMLM/artifacts/results/ldmol-qwen_cpt_sft-drug_optim/000-LDMol/checkpoints/0007000.pt'}, 'global_seed': 0, 'num_workers': 8, 'tf32': True}
+[[34m2026-02-04 23:24:17[0m] Initializing DiT model...
+[[34m2026-02-04 23:24:20[0m] DiT parameters: 190,098,048
+[[34m2026-02-04 23:24:20[0m] Initializing SMILES Encoder...
+[[34m2026-02-04 23:24:23[0m] Loaded SMILES encoder checkpoint: /data1/chenyuxuan/checkpoint/diffusion_pretrained/official/checkpoint_autoencoder.ckpt, _IncompatibleKeys(missing_keys=[], unexpected_keys=['text_encoder2.embeddings.position_ids'])
+[[34m2026-02-04 23:24:23[0m] Initializing Text Encoder...
+[[34m2026-02-04 23:24:26[0m] Text Encoder parameters: 8,188,556,288
+[[34m2026-02-04 23:24:27[0m] Loaded DiT checkpoint: /data1/chenyuxuan/MHMLM/eval_results/results/ldmol-qwen_cpt_sft-drug_optim/000-LDMol/checkpoints/0007000.pt, <All keys matched successfully>
+[[34m2026-02-04 23:24:27[0m] DistributedDataParallel  #parameters: 190098048, #trainable: 0
+[[34m2026-02-04 23:24:27[0m] ldmol_autoencoder  #parameters: 247352940, #trainable: 0
+[[34m2026-02-04 23:24:27[0m] Qwen3ForCausalLM  #parameters: 8188556288, #trainable: 0
+[[34m2026-02-04 23:24:27[0m] Generating SMILES Start!
+[[34m2026-02-04 23:24:27[0m] Dataset: 168 samples, batch_size_per_gpu: 32
+[[34m2026-02-04 23:24:27[0m] Dataset[0]: ('[CLS]O=C1C=C(N2CCNCC2)CN1c1ccc(Cl)cc1', 'O=C1C=C(N2CCOCC2)CN1c1ccc(Cl)cc1')
+[[34m2026-02-04 23:31:22[0m] Rank 0 generation finished.
+[[34m2026-02-04 23:31:23[0m] Merging files...
+[[34m2026-02-04 23:31:23[0m] All done! Saved to /data1/chenyuxuan/MHMLM/eval/drug_optim/eval_output/diffusion_sft/005-LDMol/infer/generated_molecules_t2m.txt

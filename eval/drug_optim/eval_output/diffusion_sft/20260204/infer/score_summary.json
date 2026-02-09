@@ -1,0 +1,35 @@
+{
+    "avg_main_reward": 0.2785,
+    "avg_bonus": 0.0,
+    "avg_bonus_f1": 0.0,
+    "avg_total_reward": 0.2785,
+    "w_main": 1.0,
+    "w_bonus": 1.0,
+    "paired": 170,
+    "used_pairs": 160,
+    "skipped_invalid_after": 10,
+    "reasoning_loaded": 0,
+    "avg_reasoning_length": 0.0,
+    "f1_score_stats": {
+        "min": 0.0,
+        "max": 0.0,
+        "median": 0.0,
+        "std": 0.0
+    },
+    "top_bad_features": {
+        "HIA": 160,
+        "MDCK Permeability": 160,
+        "DILI": 156,
+        "F20%": 156,
+        "Genotoxicity": 144,
+        "Human Hepatotoxicity": 143,
+        "F30%": 143,
+        "AMES Toxicity": 112,
+        "F50%": 103,
+        "CYP1A2 inhibitor": 85
+    },
+    "top_pred_features": {},
+    "avg_feature_coverage": 0.5273,
+    "has_reasoning_count": 0,
+    "has_reasoning_ratio": 0.0
+}

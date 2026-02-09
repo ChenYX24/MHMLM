@@ -1,0 +1,36 @@
+# -----------------------------------------------------------------------------
+# 数据配置
+# -----------------------------------------------------------------------------
+data:
+  data_paths: [ 
+              "/data1/chenyuxuan/MHMLM/eval_results/data/ldmol/drug_optim/processed/train_mol_edit.txt"
+              ]           # 数据路径（支持 .txt 或 .csv）
+  max_smiles_len: 350                     # SMILES 最大长度
+
+# -----------------------------------------------------------------------------
+# DiT 模型配置
+# -----------------------------------------------------------------------------
+dit:
+  name: "LDMol"                       # DiT 模型名称（对应 DiT_models 注册名）
+  ckpt: "/data1/chenyuxuan/checkpoint/diffusion_pretrained/ours/ldmol/ldmol_chatmol-qwen3_8b.pt"
+  latent_size: 127                        # Autoencoder latent 序列长度
+  in_channels: 64                         # latent 通道数
+  cross_attn_dim: 768                     # cross attention 维度
+  condition_dim: 2048                     # 条件嵌入维度
+
+# -----------------------------------------------------------------------------
+# SMILES Encoder 配置
+# -----------------------------------------------------------------------------
+smiles_encoder:
+  name: "autoencoder"                    
+  ckpt: "/data1/chenyuxuan/checkpoint/diffusion_pretrained/official/checkpoint_autoencoder.ckpt"
+  
+
+# -----------------------------------------------------------------------------
+# Text Encoder 配置
+# -----------------------------------------------------------------------------
+text_encoder:
+  name: "qwen3_8b"                       # Text Encoder 类型（目前仅支持 qwen3_8b）
+  ckpt: "/data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200/llm"                      # Text Encoder 预训练权重路径
+  hidden_dim: 4096 
+  description_length: 256                      

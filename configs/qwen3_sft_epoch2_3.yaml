@@ -1,0 +1,72 @@
+seed: 42
+
+paths:
+  llm_name_or_path: "/data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200/llm"
+  output_dir: "/data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze_20260128"
+  gnn_state_dict_path: "/data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200"
+  gnn_mlp_state_dict_path: "/data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200"
+  mlp_token_classifier_path: "/data1/lvchangwei/LLM/Lora/qwen3_mlp_token_head.pt"
+  deepspeed_config: "configs/deepspeed_zero3.json"
+  # 注意：paths.checkpoint_dir 需要在跑完 epoch1 后，手动改成实际的 checkpoint-XXXX 目录
+  # 例如：/data1/chenyuxuan/MSMLM/model/mistral_cpt_sft_twoepoch/epoch1/checkpoint-XXX
+  checkpoint_dir: "/data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200"
+
+tokens:
+  mol_token: "<mol>"
+
+data:
+  dataset_path: "/data1/chenyuxuan/train_data/SFT_DATA/chat_data_msg/sft_2.5_to_1_30k_balanced.jsonl"
+  epoch1_output: "/data1/chenyuxuan/train_data/SFT_DATA/chat_data_msg/sft_2.5_to_1_30k_balanced.jsonl"
+  epoch2_output: "/data1/chenyuxuan/train_data/SFT_DATA/chat_data_msg/sft_2.5_to_1_30k_balanced.jsonl"
+  qm9_stats_file: null
+  epoch1_qm9_max_samples: null
+  use_cache: true
+  debug_max_samples: null
+
+train:
+  # 纯 SFT，只训 LLM
+  use_gnn_tasks: false
+  lambda_gnn: 0.0
+
+  max_seq_length: 2048
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 1e-5
+  num_train_epochs: 1
+  logging_steps: 10
+  save_steps: 200
+  eval_steps: 50
+  warmup_ratio: 0.03
+  bf16: true
+  gradient_checkpointing: true
+  packing: false
+  dataloader_pin_memory: false  # 设置为 false 以避免内存映射问题
+  lr_scheduler_type: "cosine"
+  max_retries: 3
+  retry_backoff_sec: 30
+  save_total_limit: 2
+
+  use_preprocess_cache: true
+  dataloader_num_workers: 8
+  dataloader_prefetch_factor: 2
+
+  max_grad_norm: 1.0
+  weight_decay: 0.01
+
+  use_diffusion: false
+
+  use_offline_spans: false
+  offline_tagging_batch_size: 128
+
+  # 冻结策略：只训 LLM，GVP / mol_adapter 冻结
+  freeze_llm: false
+  freeze_gnn: false
+  freeze_mol_adapter: false
+  freeze_diffusion_adapter: true
+  freeze_diffusion: true
+
+network:
+  proxy: "http://127.0.0.1:7899"
+
+

@@ -1,0 +1,55 @@
+data:
+  dataset_path: /data1/chenyuxuan/MHMLM/scripts/layer2_llm/data/training_data_product_dev.jsonl
+  debug_max_samples: null
+  epoch1_output: /data1/chenyuxuan/train_data/SFT_DATA/chat_data_msg/sft_2.5_to_1_30k_balanced.jsonl
+  epoch1_qm9_max_samples: null
+  epoch2_output: /data1/chenyuxuan/train_data/SFT_DATA/chat_data_msg/sft_2.5_to_1_30k_balanced.jsonl
+  qm9_stats_file: null
+  use_cache: true
+network:
+  proxy: http://127.0.0.1:7899
+paths:
+  checkpoint_dir: /data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200
+  deepspeed_config: configs/deepspeed_zero3.json
+  gnn_mlp_state_dict_path: /data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200
+  gnn_state_dict_path: /data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200
+  llm_name_or_path: /data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200/llm
+  mlp_token_classifier_path: /data1/lvchangwei/LLM/Lora/qwen3_mlp_token_head.pt
+  output_dir: /data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze_20260128
+seed: 42
+tokens:
+  mol_token: <mol>
+train:
+  bf16: true
+  dataloader_num_workers: 8
+  dataloader_pin_memory: false
+  dataloader_prefetch_factor: 2
+  eval_steps: 50
+  freeze_diffusion: true
+  freeze_diffusion_adapter: true
+  freeze_gnn: false
+  freeze_llm: false
+  freeze_mol_adapter: false
+  gradient_accumulation_steps: 4
+  gradient_checkpointing: true
+  lambda_gnn: 0.0
+  learning_rate: 1e-5
+  logging_steps: 10
+  lr_scheduler_type: cosine
+  max_grad_norm: 1.0
+  max_retries: 3
+  max_seq_length: 2048
+  num_train_epochs: 1
+  offline_tagging_batch_size: 128
+  packing: false
+  per_device_eval_batch_size: 2
+  per_device_train_batch_size: 2
+  retry_backoff_sec: 30
+  save_steps: 200
+  save_total_limit: 2
+  use_diffusion: false
+  use_gnn_tasks: false
+  use_offline_spans: false
+  use_preprocess_cache: true
+  warmup_ratio: 0.03
+  weight_decay: 0.01

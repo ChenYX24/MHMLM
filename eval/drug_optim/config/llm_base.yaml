@@ -1,0 +1,29 @@
+# LLM Base 模型评估配置
+model_type: llm
+model_name: llm_base
+
+# 模型路径
+ckpt: /data1/chenyuxuan/base_model/qwen3_8b
+
+# 输入数据（test_text2smi.jsonl 格式）
+input_data: /data1/chenyuxuan/MHMLM/eval_results/data/ldmol/drug_optim/processed/test_text2smi.jsonl
+
+# 推理算法
+algorithm: chat
+
+# 设备配置: "auto" / "cuda:0" / "0" / "0,1,2"（多卡）
+device: 6,7
+
+# 批量推理
+batch_size: 8
+
+# Qwen3 思考模式（true=启用思考链，会输出思考过程）
+enable_thinking: false
+
+# 是否在输出中包含思考过程
+include_thinking: false
+
+# 生成参数
+max_new_tokens: 256
+temperature: 0.7
+do_sample: true

@@ -1,0 +1,40 @@
+# Layer2 训练配置文件
+
+# 模型配置
+mol_emb_dim: 256
+hidden_dim: 512
+n_layers: 6
+n_heads: 8
+dropout: 0.1
+num_roles: 11
+num_token_types: 2
+tau: 0.07
+learnable_tau: false
+symmetric_ince: false
+
+# 训练配置
+data_path: "/data1/chenyuxuan/Layer2/data/train.jsonl"  # 训练数据路径（默认）
+use_indexed_dataset: false  # 是否使用 IndexedDataset（更快但需要构建索引）
+batch_size: 32
+num_workers: 4
+learning_rate: 1e-4
+weight_decay: 0.01
+num_epochs: 10
+save_steps: 1000
+log_steps: 100
+
+# Loss 权重
+emb_lambda: 1.0
+amt_lambda: 1.0
+yield_weight: 1.0
+yield_reg_lambda: 1.0
+yield_mode: "both"  # "reg_only", "bin_only", "soft_bin_only", "both"
+
+# Masking 配置
+emb_mask_prob: 0.15
+amt_mask_prob: 0.15
+
+# 其他
+tf32: true
+global_seed: 42
+results_dir: "/data1/chenyuxuan/checkpoint/layer2_training"  # 训练输出目录（默认）

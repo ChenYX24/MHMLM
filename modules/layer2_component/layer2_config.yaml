@@ -1,0 +1,26 @@
+# Layer2 配置文件
+# 参考 LDMol 的配置方式
+
+# 模型配置
+# 注意：这些配置必须与 checkpoint 中的配置一致
+# checkpoint 使用的是 hidden_dim=768 (medium 配置)
+mol_emb_dim: 256
+hidden_dim: 768  # 从 checkpoint 中读取，应该是 768
+n_layers: 8  # 从 checkpoint 中读取，应该是 8
+n_heads: 12  # 从 checkpoint 中读取，应该是 12
+dropout: 0.1
+num_roles: 11
+num_token_types: 2
+tau: 0.07
+learnable_tau: false
+symmetric_ince: false
+
+# 模型权重路径（相对于配置文件或绝对路径）
+checkpoint_path: "/data1/chenyuxuan/Layer2/ckpt/0115/layer2_pretrain.pt"  # Layer2 pretrained checkpoint
+
+# GVP 相关
+gvp_root: "/data1/chenyuxuan/MSMLM"  # GVP 项目根目录（默认）
+gvp_ckpt_path: "/data1/chenyuxuan/checkpoint/gvp_weights_best.pt"  # GVP checkpoint 路径（默认）
+
+# 推理参数
+yield_mode: "both"  # "reg_only", "bin_only", "soft_bin_only", "both"

@@ -1,0 +1,7 @@
+{
+  "config_path": "config/diffusion_base.yaml",
+  "model_name": "diffusion_base",
+  "model_type": "diffusion",
+  "output_dir": "/data1/chenyuxuan/MHMLM/eval/drug_optim/eval_output/diffusion_base",
+  "timestamp": "2026-01-29T01:20:45.099794"
+}

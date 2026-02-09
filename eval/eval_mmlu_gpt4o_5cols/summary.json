@@ -1,0 +1,63 @@
+{
+  "by_column": {
+    "HS Chem": {
+      "subjects": [
+        "high_school_chemistry"
+      ],
+      "acc": 0.0,
+      "correct": 0,
+      "total": 203,
+      "invalid": 203
+    },
+    "College Chem": {
+      "subjects": [
+        "college_chemistry"
+      ],
+      "acc": 0.0,
+      "correct": 0,
+      "total": 100,
+      "invalid": 100
+    },
+    "Organic Chem": {
+      "subjects": [
+        "high_school_chemistry",
+        "college_chemistry"
+      ],
+      "acc": 0.0,
+      "correct": 0,
+      "total": 303,
+      "invalid": 303
+    },
+    "Physical Chem": {
+      "subjects": [
+        "conceptual_physics",
+        "high_school_physics",
+        "college_physics"
+      ],
+      "acc": 0.0,
+      "correct": 0,
+      "total": 488,
+      "invalid": 488
+    },
+    "General Sci": {
+      "subjects": [
+        "astronomy",
+        "conceptual_physics",
+        "high_school_physics",
+        "college_physics"
+      ],
+      "acc": 0.0,
+      "correct": 0,
+      "total": 640,
+      "invalid": 640
+    }
+  },
+  "overall": {
+    "acc": 0.0,
+    "correct": 0,
+    "total": 1734,
+    "invalid": 1734,
+    "model": "gpt-5",
+    "base_url": "https://yeysai.com/v1"
+  }
+}

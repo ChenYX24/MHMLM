@@ -1,0 +1,7 @@
+{
+  "config_path": "config/llm_base.yaml",
+  "model_name": "llm_base",
+  "model_type": "llm",
+  "output_dir": "/data1/chenyuxuan/MHMLM/eval/drug_optim/eval_output/llm_base",
+  "timestamp": "2026-01-29T01:09:26.304352"
+}

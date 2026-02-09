@@ -1,0 +1,35 @@
+# ====================================================================
+# LDMol 推理配置文件
+# ====================================================================
+
+# ----- 基础配置 -----
+tf32: true                           # 启用 TF32 加速（Ampere GPU）
+
+# ----- DiT 模型配置 -----
+dit_name: "LDMol"                    # DiT 模型名称
+ldmol_ckpt_path: "/data1/chenyuxuan/checkpoint/diffusion_pretrained/ours/ldmol/ldmol_chatmol-qwen3_8b.pt"
+
+# ----- Text Encoder 配置 -----
+# 目前仅支持 qwen，其他类型会抛出 AssertionError
+text_encoder_name: "qwen"            # 文本编码器类型: qwen
+text_encoder_path: "/data1/chenyuxuan/base_model/qwen3_8b"  # 模型路径
+llm_hidden_dim: 4096                 # Qwen3_8B 隐藏层维度
+condition_dim: 2048                  # 投影后的条件维度
+description_length: 512              # 文本最大 token 长度
+
+# ----- Autoencoder (VAE) 配置 -----
+vae_ckpt_path: "/data1/chenyuxuan/checkpoint/diffusion_pretrained/official/checkpoint_autoencoder.ckpt"
+ae_embed_dim: 256                    # Autoencoder 嵌入维度
+ae_use_linear: true                  # 是否使用线性层
+
+# ----- T2M (Text-to-Molecule) 采样配置 -----
+num_sampling_steps: 100              # 扩散采样步数
+cfg_scale: 2.5                       # Classifier-Free Guidance 系数
+prompt_null: "no description."       # CFG 的 null condition 文本
+
+# ----- DDS (Diffusion-based Drug Steering) 配置 -----
+dds_loss_scale: 0.4                  # 梯度更新系数
+dds_n_iter: 200                      # 优化迭代次数
+dds_cfg_scale: 2.0                   # DDS 中的 CFG 系数
+dds_t_min: 100                       # 时间步采样下界
+dds_t_max: 900                       # 时间步采样上界

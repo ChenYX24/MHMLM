@@ -1,0 +1,110 @@
+{
+  "by_task": {
+    "forward_synthesis": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "molecule_captioning": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "molecule_generation": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "name_conversion-i2f": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "name_conversion-i2s": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "name_conversion-s2f": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "name_conversion-s2i": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "property_prediction-bbbp": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "property_prediction-clintox": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "property_prediction-esol": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "property_prediction-hiv": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "property_prediction-lipo": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "property_prediction-sider": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "retrosynthesis": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    },
+    "unknown": {
+      "total": 200,
+      "valid_pct": 0.0,
+      "em": 0.0,
+      "em_correct": 0
+    }
+  },
+  "overall": {
+    "total": 3000,
+    "valid_pct": 0.0,
+    "em": 0.0,
+    "em_correct": 0
+  },
+  "meta": {
+    "model": "gpt-4o",
+    "base_url": "https://api.openai.com/v1",
+    "data_dir": "/data1/chenyuxuan/datasets/SMolInstruct_repo/data_unzipped",
+    "use_test_subset_simulated": true,
+    "per_task_cap": 200,
+    "has_rdkit": true,
+    "has_pyarrow": true,
+    "has_pandas": true
+  }
+}

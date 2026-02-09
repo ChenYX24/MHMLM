@@ -1,0 +1,18 @@
+# Diffusion Base 模型评估配置
+model_type: diffusion
+model_name: diffusion_base
+
+# 模型路径
+ckpt: /data1/chenyuxuan/checkpoint/diffusion_pretrained/ours/ldmol/ldmol_chatmol.pt
+
+# 输入数据（test_dds.txt 格式）
+input_data: /data1/chenyuxuan/MHMLM/eval_results/data/ldmol/drug_optim/processed/test_dds.txt
+
+# 推理算法
+algorithm: dds
+
+# 设备配置: "cuda:0" / "0"（Diffusion 仅支持单卡）
+device: 5
+
+# LDMol 配置文件（可选，默认使用 ldmol_config.yaml）
+ldmol_config: null

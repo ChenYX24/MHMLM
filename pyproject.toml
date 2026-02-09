@@ -1,0 +1,75 @@
+[project]
+name = "mhmlm"
+version = "0.1.0"
+description = "Molecular Hierarchical Multi-Language Model with LDMol diffusion"
+requires-python = ">=3.10"
+dependencies = [
+    # 核心深度学习框架（参考 llam3.2 环境版本，固定版本以确保兼容性）
+    "torch==2.3.1",
+    "torchvision==0.18.1",
+    "torch-geometric==2.7.0",
+    "transformers>=4.30.1",
+    "timm>=0.9.16",
+    "einops>=0.7.0",
+    "pytorch-lightning>=2.1.0",
+
+    # 数据处理和科学计算
+    "numpy>=1.22.3",
+    "scipy>=1.11.3",
+    "pandas>=2.0.3",
+    "tqdm>=4.65.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "tabulate>=0.9.0",
+
+    # 分子相关
+    "rdkit>=2023.3.1",
+    "fcd>=1.2.2",
+    "pysmilesutils @ git+https://github.com/MolecularAI/pysmilesutils.git@b1e7ced15a42e18e629b984816020b1f0b0a2aa3",
+
+    # GVP 相关依赖
+    "torch-scatter>=2.1.0",
+    "torch-cluster>=1.6.0",
+    "gvp @ file:///data1/chenyuxuan/MSMLM/gvp-pytorch-main",
+
+    # 文本处理
+    "nltk>=3.8.1",
+    "python-Levenshtein>=0.21.1",
+    "rouge-score>=0.1.2",
+
+    # 其他工具
+    "absl-py>=1.4.0",
+    "pillow>=10.0.1",
+    "rich>=13.0.0",  # trl 依赖
+
+    # HuggingFace相关
+    "datasets>=2.14.0",
+    "trl==0.11.4",
+    "accelerate>=0.21.0",
+    "peft>=0.6.0",
+
+    # LDMol/Diffusion 相关依赖
+    "diffusers>=0.27.0",
+    "omegaconf>=2.3.0",
+
+    # ✅ FlashAttention：直接指定 torch2.3 对应 wheel（避免源码编译/避免 nvcc）
+    # 只在 Linux + Python 3.10 下启用
+    "flash-attn @ file:///data1/chenyuxuan/MHMLM/wheels/flash_attn-2.5.8+cu122torch2.3cxx11abiFALSE-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and python_version == '3.10'",
+]
+
+[build-system]
+requires = ["hatchling", "torch==2.3.1"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["modules"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[dependency-groups]
+dev = []
+
+[tool.uv.extra-build-dependencies]
+torch-cluster = ["torch==2.3.1"]
+torch-scatter = ["torch==2.3.1"]

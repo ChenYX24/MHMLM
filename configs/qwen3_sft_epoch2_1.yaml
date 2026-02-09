@@ -1,0 +1,70 @@
+seed: 42
+
+paths:
+  llm_name_or_path: "/data1/chenyuxuan/checkpoint/qwen3-8b-cpt/v4-20251208-164944/checkpoint-14000"
+  output_dir: "/data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/GNN_nofreeze_20260128"
+  gnn_state_dict_path: "/data1/lvchangwei/GNN/Project/GVP/checkpoints_256_wo/gvp_weights_best.pt"
+  gnn_mlp_state_dict_path: "/data1/chenyuxuan/MSMLM/model/gnn_mlp_qwen/mlp_adapter.pt"
+  mlp_token_classifier_path: "/data1/lvchangwei/LLM/Lora/qwen3_mlp_token_head.pt"
+  deepspeed_config: "configs/deepspeed_zero3.json"
+
+tokens:
+  mol_token: "<mol>"
+
+data:
+  dataset_path: "/data1/chenyuxuan/MSMLM/code/data/epoch1_preprocessed_qwen_test.jsonl"
+  epoch1_output: "/data1/chenyuxuan/MSMLM/code/data/epoch1_preprocessed_qwen_test.jsonl"
+  epoch2_output: "/data1/chenyuxuan/MSMLM/code/data/epoch1_preprocessed_qwen_test.jsonl"
+  qm9_stats_file: /data1/chenyuxuan/MSMLM/code/data/epoch1_preprocessed_qm9_stats.json
+  epoch1_qm9_max_samples: null
+  use_cache: true
+  debug_max_samples: null
+
+
+train:
+  # 只用 LM loss，不加 GNN supervised loss
+  use_gnn_tasks: false
+  lambda_gnn: 0.0
+
+  max_seq_length: 4096
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 16
+  gradient_accumulation_steps: 16
+  learning_rate: 2e-5
+  num_train_epochs: 1
+  logging_steps: 5
+  save_steps: 50
+  eval_steps: 50
+  warmup_ratio: 0.03
+  bf16: true
+  gradient_checkpointing: true
+  packing: false
+  dataloader_pin_memory: false  # 设置为 false 以避免内存映射问题
+  lr_scheduler_type: "cosine"
+  max_retries: 3
+  retry_backoff_sec: 30
+  save_total_limit: 3
+
+  use_preprocess_cache: false
+  dataloader_num_workers: 4
+  dataloader_prefetch_factor: 2
+
+  max_grad_norm: 1.0
+  weight_decay: 0.01
+
+  use_diffusion: false
+
+  use_offline_spans: false
+  offline_tagging_batch_size: 128
+
+  # 冻结策略：LLM 冻结，GVP + mol_adapter 训练
+  freeze_llm: true
+  freeze_gnn: false
+  freeze_mol_adapter: false
+  freeze_diffusion_adapter: true
+  freeze_diffusion: true
+
+network:
+  proxy: "http://127.0.0.1:7899"
+
+

@@ -1,0 +1,55 @@
+{
+  "by_column": {
+    "HS Chem": {
+      "subjects": [
+        "high_school_chemistry"
+      ],
+      "acc": 0.7684729064039408,
+      "correct": 156,
+      "total": 203
+    },
+    "College Chem": {
+      "subjects": [
+        "college_chemistry"
+      ],
+      "acc": 0.57,
+      "correct": 57,
+      "total": 100
+    },
+    "Organic Chem": {
+      "subjects": [
+        "college_chemistry",
+        "high_school_chemistry"
+      ],
+      "acc": 0.7029702970297029,
+      "correct": 213,
+      "total": 303
+    },
+    "Physical Chem": {
+      "subjects": [
+        "college_physics",
+        "high_school_physics",
+        "conceptual_physics"
+      ],
+      "acc": 0.7151639344262295,
+      "correct": 349,
+      "total": 488
+    },
+    "General Sci": {
+      "subjects": [
+        "astronomy",
+        "college_physics",
+        "high_school_physics",
+        "conceptual_physics"
+      ],
+      "acc": 0.75625,
+      "correct": 484,
+      "total": 640
+    }
+  },
+  "overall": {
+    "acc": 0.7260668973471741,
+    "correct": 1259,
+    "total": 1734
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "product": {
+    "acc": 0.1605351170568562,
+    "correct": 48,
+    "total": 299,
+    "invalid": 0,
+    "task_file": "Product_Prediction_benchmark.json"
+  },
+  "retro": {
+    "acc": 0.16722408026755853,
+    "correct": 50,
+    "total": 299,
+    "invalid": 0,
+    "task_file": "Retrosynthesis_benchmark.json"
+  },
+  "yield": {
+    "acc": 0.27759197324414714,
+    "correct": 83,
+    "total": 299,
+    "invalid": 0,
+    "task_file": "Yield_Prediction_benchmark.json"
+  },
+  "overall": {
+    "acc": 0.20178372352285395,
+    "correct": 181,
+    "total": 897,
+    "invalid": 0
+  }
+}

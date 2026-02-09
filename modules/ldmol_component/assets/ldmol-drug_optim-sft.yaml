@@ -1,0 +1,59 @@
+# -----------------------------------------------------------------------------
+# 数据配置
+# -----------------------------------------------------------------------------
+data:
+  data_paths: [ 
+              "/data1/chenyuxuan/MHMLM/eval_results/data/ldmol/drug_optim/processed/train_mol_edit.txt"
+              ]           # 训练数据路径（支持 .txt 或 .csv）
+  max_smiles_len: 350                     # SMILES 最大长度
+
+# -----------------------------------------------------------------------------
+# DiT 模型配置
+# -----------------------------------------------------------------------------
+dit:
+  name: "LDMol"                       # DiT 模型名称（对应 DiT_models 注册名）
+  ckpt: "/data1/chenyuxuan/checkpoint/diffusion_pretrained/ours/ldmol/ldmol_chatmol-qwen3_8b.pt"
+  latent_size: 127                        # Autoencoder latent 序列长度
+  in_channels: 64                         # latent 通道数
+  cross_attn_dim: 768                     # cross attention 维度
+  condition_dim: 2048                     # 条件嵌入维度
+
+# -----------------------------------------------------------------------------
+# SMILES Encoder 配置
+# -----------------------------------------------------------------------------
+smiles_encoder:
+  name: "autoencoder"                    
+  ckpt: "/data1/chenyuxuan/checkpoint/diffusion_pretrained/official/checkpoint_autoencoder.ckpt"
+  
+
+# -----------------------------------------------------------------------------
+# Text Encoder 配置
+# -----------------------------------------------------------------------------
+text_encoder:
+  name: "qwen3_8b"                       # Text Encoder 类型（目前仅支持 qwen3_8b）
+  ckpt: "/data1/chenyuxuan/checkpoint/qwen3_8b_cpt_sft/epoch2/LLM_nofreeze/checkpoint-4200/llm"                      # Text Encoder 预训练权重路径
+  hidden_dim: 4096 
+  description_length: 256                      
+
+# -----------------------------------------------------------------------------
+# 训练超参数
+# -----------------------------------------------------------------------------
+epochs: 5                               # 训练轮数
+global_batch_size: 64                   # 全局 batch size
+learning_rate: 1.0e-4                   # 学习率
+unconditional_prob: 0.05                # 无条件训练概率（用于 CFG）
+ema_decay: 0.9999                       # EMA 衰减系数
+
+# -----------------------------------------------------------------------------
+# 日志和保存
+# -----------------------------------------------------------------------------
+results_dir: "./eval_results/results/ldmol-qwen_cpt_sft-drug_optim"        # 输出目录
+log_every: 100                          # 日志频率（每 N 步）
+ckpt_every: 500                        # 保存 checkpoint 频率（每 N 步）
+
+# -----------------------------------------------------------------------------
+# 其他
+# -----------------------------------------------------------------------------
+global_seed: 0                          # 随机种子
+num_workers: 8                          # DataLoader workers 数量
+tf32: true                              # 是否启用 TF32 加速
