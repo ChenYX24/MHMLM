@@ -21,6 +21,8 @@ class MaskingConfig:
     p_retro: float = 0.3
     p_condition: float = 0.2
     p_random: float = 0.1
+    p_yield_full: float = 0.0       # task2a: full info, predict yield
+    p_yield_with_product: float = 0.0  # task2b: mask product + predict yield
 
     # retro 任务：随机 mask 的 INPUT token 数量范围（含端点）
     retro_min_mask: int = 1
@@ -76,20 +78,23 @@ def _stable_rng(seed: int, reaction_id: str, extra: str) -> random.Random:
     return random.Random(rng_seed)
 
 
-def _choose_task(rng: random.Random, cfg: MaskingConfig) -> str:
-    ps = [cfg.p_forward, cfg.p_retro, cfg.p_condition, cfg.p_random]
+def _choose_task(rng: random.Random, cfg: MaskingConfig, has_yield: bool = False) -> str:
+    ps = [cfg.p_forward, cfg.p_retro, cfg.p_condition, cfg.p_random,
+          cfg.p_yield_full, cfg.p_yield_with_product]
     s = sum(ps)
     if s <= 0:
         return "forward"
     r = rng.random() * s
-    if r < ps[0]:
-        return "forward"
-    r -= ps[0]
-    if r < ps[1]:
-        return "retro"
-    r -= ps[1]
-    if r < ps[2]:
-        return "condition"
+    cum = 0.0
+    tasks = ["forward", "retro", "condition", "random",
+             "yield_full", "yield_with_product"]
+    for p, task in zip(ps, tasks):
+        cum += p
+        if r < cum:
+            # yield tasks require has_yield; fall back to forward if not available
+            if task in ("yield_full", "yield_with_product") and not has_yield:
+                return "forward"
+            return task
     return "random"
 
 
@@ -198,7 +203,7 @@ def apply_dynamic_mask(
     if isinstance(cfg, EvalMaskingConfig):
         task = _choose_eval_task(rng, cfg, reaction_id, has_yield)
     else:
-        task = _choose_task(rng, cfg)
+        task = _choose_task(rng, cfg, has_yield=has_yield)
     targets: Dict[str, Any] = {"task": task, "embedding": [], "amount": []}
 
     # helper：mask embedding

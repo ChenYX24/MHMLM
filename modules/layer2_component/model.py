@@ -28,6 +28,8 @@ class ModelConfig:
     tau: float = 0.07  # InfoNCE temperature
     learnable_tau: bool = False  # 是否让 tau 可学习
     symmetric_ince: bool = False  # 是否使用对称 InfoNCE
+    use_projection_head: bool = False  # 使用 MLP 投影头做 InfoNCE（训练时）
+    head_dropout: float = 0.0  # Dropout applied before task heads (v4)
 
 
 if nn is not None:
@@ -65,6 +67,16 @@ if nn is not None:
             self.final_ln = nn.LayerNorm(cfg.hidden_dim)
 
             self.emb_head = nn.Linear(cfg.hidden_dim, cfg.mol_emb_dim)
+
+            # MLP projection head for contrastive learning (SimCLR/MoCo style)
+            # Training: use emb_proj for InfoNCE (better gradient flow)
+            # Inference: use emb_head (linear) for downstream embedding
+            self.emb_proj = nn.Sequential(
+                nn.Linear(cfg.hidden_dim, cfg.hidden_dim),
+                nn.GELU(),
+                nn.Linear(cfg.hidden_dim, cfg.mol_emb_dim),
+            ) if cfg.use_projection_head else None
+
             self.amt_head = nn.Linear(cfg.hidden_dim, 3)  # moles/mass/volume
             self.yield_bin_head = nn.Linear(cfg.hidden_dim, 10)
             self.yield_reg_head = nn.Linear(cfg.hidden_dim, 1)
@@ -75,6 +87,9 @@ if nn is not None:
                 self.log_tau = nn.Parameter(torch.log(torch.tensor(cfg.tau)))
             else:
                 self.log_tau = None
+
+            # Head dropout (v4: regularize before task heads)
+            self.head_drop = nn.Dropout(cfg.head_dropout) if cfg.head_dropout > 0 else nn.Identity()
 
             nn.init.normal_(self.mask_mol_emb, std=0.02)
             nn.init.normal_(self.cls_emb, std=0.02)
@@ -109,21 +124,31 @@ if nn is not None:
             h = self.encoder(x, src_key_padding_mask=key_padding_mask)
             h = self.final_ln(h)
 
-            cls_h = h[:, 0, :]
-            tok_h = h
+            cls_h = self.head_drop(h[:, 0, :])
+            tok_h_drop = self.head_drop(h)
 
-            pred_emb = self.emb_head(tok_h)  # [B,L,D]
-            pred_amt = self.amt_head(tok_h)  # [B,L,3]
+            pred_emb = self.emb_head(tok_h_drop)  # [B,L,D]
+            pred_amt = self.amt_head(tok_h_drop)  # [B,L,3]
             pred_yield_bin = self.yield_bin_head(cls_h)  # [B,10]
             pred_yield_reg = self.yield_reg_head(cls_h).squeeze(-1)  # [B]
 
-            return {
+            tok_h = h  # original hidden states (for emb_proj etc.)
+
+            result = {
                 "tok_h": tok_h,
                 "pred_emb": pred_emb,
                 "pred_amt": pred_amt,
                 "pred_yield_bin": pred_yield_bin,
                 "pred_yield_reg": pred_yield_reg,
             }
+            if self.emb_proj is not None:
+                result["pred_emb_proj"] = self.emb_proj(tok_h_drop)  # [B,L,D]
+
+            # Compute tau inside forward for DDP gradient tracking
+            if self.log_tau is not None:
+                result["tau"] = torch.exp(self.log_tau).clamp(min=0.01, max=1.0)
+
+            return result
 
     def compute_losses(
         out: dict[str, "torch.Tensor"],
@@ -143,6 +168,7 @@ if nn is not None:
         yield_reg_std: float = 1.0,  # Yield regression 的标准差（用于标准化）
         yield_mode: str = "reg_only",  # Yield 预测模式: "reg_only", "bin_only", "soft_bin_only", "both"
         yield_soft_bin_temperature: float = 0.1,  # 软标签分类的温度参数（越小越尖锐）
+        yield_label_smoothing: float = 0.0,  # Label smoothing for yield CE losses (v4)
     ) -> dict[str, "torch.Tensor"]:
         """
         多任务加权：
@@ -162,13 +188,11 @@ if nn is not None:
             yield_weight = yield_lambda
 
         # 获取实际的 tau（可能是可学习的）
-        actual_tau = tau
-        if model is not None:
-            # 处理 DDP 包装的模型：通过 .module 访问原始模型
-            actual_model = model.module if hasattr(model, 'module') else model
-            if hasattr(actual_model, 'log_tau') and actual_model.log_tau is not None:
-                # 可学习的 tau：exp(log_tau) 并 clamp 到 [0.01, 1.0]
-                actual_tau = torch.exp(actual_model.log_tau).clamp(min=0.01, max=1.0)
+        # Prefer tau from forward output (preserves DDP gradient tracking)
+        if "tau" in out:
+            actual_tau = out["tau"]
+        else:
+            actual_tau = tau
 
         # -------- emb --------
         emb_loss = torch.zeros((), device=device)
@@ -176,11 +200,13 @@ if nn is not None:
             qp = batch.emb_query_pos.to(device)  # [M,2]
             pos = batch.emb_pos.to(device)       # [M,D]
 
-            q = out["pred_emb"][qp[:, 0], qp[:, 1], :]  # [M,D]
+            # Use projection head output for InfoNCE if available (better training)
+            emb_key = "pred_emb_proj" if "pred_emb_proj" in out else "pred_emb"
+            q = out[emb_key][qp[:, 0], qp[:, 1], :]  # [M,D]
             q = F.normalize(q, p=2, dim=-1)
             pos = F.normalize(pos, p=2, dim=-1)
 
-            logits = (q @ pos.t()) / float(actual_tau)
+            logits = (q @ pos.t()) / actual_tau
             targets = torch.arange(pos.size(0), device=device, dtype=torch.long)
             
             if symmetric_ince:
@@ -230,9 +256,9 @@ if nn is not None:
             elif yield_mode == "bin_only":
                 # 只用分类头
                 if yield_class_weights is not None:
-                    yield_loss = F.cross_entropy(pred_bin, y_bin, weight=yield_class_weights.to(device))
+                    yield_loss = F.cross_entropy(pred_bin, y_bin, weight=yield_class_weights.to(device), label_smoothing=yield_label_smoothing)
                 else:
-                    yield_loss = F.cross_entropy(pred_bin, y_bin)
+                    yield_loss = F.cross_entropy(pred_bin, y_bin, label_smoothing=yield_label_smoothing)
                     
             elif yield_mode == "soft_bin_only":
                 # 软标签分类：将 y_reg 转换为软标签分布，使用 KL-Divergence
@@ -258,9 +284,9 @@ if nn is not None:
             else:  # yield_mode == "both" (默认)
                 # 同时使用分类和回归
                 if yield_class_weights is not None:
-                    bin_loss = F.cross_entropy(pred_bin, y_bin, weight=yield_class_weights.to(device))
+                    bin_loss = F.cross_entropy(pred_bin, y_bin, weight=yield_class_weights.to(device), label_smoothing=yield_label_smoothing)
                 else:
-                    bin_loss = F.cross_entropy(pred_bin, y_bin)
+                    bin_loss = F.cross_entropy(pred_bin, y_bin, label_smoothing=yield_label_smoothing)
                 
                 if yield_reg_std > 0:
                     y_reg_normalized = (y_reg - yield_reg_mean) / yield_reg_std

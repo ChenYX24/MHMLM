@@ -68,3 +68,25 @@ ACTIVE_CONTEXT.md
 
 # UV
 .uv/
+
+# Claude Code
+CLAUDE.md
+
+# Backup files
+*.bak
+*.bak_*
+
+# Training logs (root level)
+train_stage2*.log
+v*_train.log
+diagnose_yield.py
+
+# Eval result directories (generated, not code)
+eval_chembench_gpt5/
+eval/eval_mmlu_gpt5_5cols/
+eval/eval_mmlu_interns1mini_5subsets/
+eval/eval_smol_gpt4o/
+eval/eval_smol_gpt5/
+eval/eval_smol_instruct_gpt4o_debug/
+eval/eval_smol_interns1mini_200each/
+modules/artifacts/

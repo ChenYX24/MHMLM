@@ -1,0 +1,72 @@
+# Layer2 Stage 2 训练配置 (v3 - freeze backbone, only train heads)
+# Motivation: 28K samples + 58.5M params = severe overfitting by epoch 18
+# Fix: Freeze backbone encoder, only train ~1.6M head params
+#
+# Changes from v2:
+# - freeze_backbone: true
+# - learning_rate: 0.001 (higher for heads-only training)
+# - num_epochs: 200 (fewer needed with frozen backbone)
+# - warmup_steps: 200 (shorter warmup)
+# - grad_accumulation_steps: 1 (faster iteration)
+
+# 模型配置 (must match Stage 1 checkpoint)
+mol_emb_dim: 256
+hidden_dim: 768
+n_layers: 8
+n_heads: 12
+dropout: 0.2
+num_roles: 11
+num_token_types: 2
+tau: 0.07
+learnable_tau: true
+symmetric_ince: true
+use_projection_head: true
+
+# 数据配置
+data_path: "/data1/chenyuxuan/Layer2/data/ord_layer2_v2/layer2_train.jsonl"
+val_data_path: "/data1/chenyuxuan/Layer2/data/ord_layer2_v2/layer2_val.jsonl"
+use_indexed_dataset: true
+
+# 训练配置
+batch_size: 64
+learning_rate: 0.001
+weight_decay: 0.01
+num_epochs: 200
+warmup_steps: 200
+min_lr: 0.000001
+grad_accumulation_steps: 1
+save_steps: 500
+eval_steps: 200
+log_steps: 50
+num_workers: 4
+
+# Freeze backbone
+freeze_backbone: true
+
+# AMP
+use_amp: true
+
+# Loss 权重
+emb_lambda: 1.0
+amt_lambda: 0.3
+yield_weight: 3.0
+yield_mode: "both"
+yield_soft_bin_temperature: 0.1
+yield_reg_lambda: 1.0
+yield_class_weights: true
+
+# Masking (yield-focused)
+p_forward: 0.20
+p_retro: 0.15
+p_condition: 0.10
+p_random: 0.05
+p_yield_full: 0.25
+p_yield_with_product: 0.25
+
+# Resume from Stage 1
+resume_from: "/data1/chenyuxuan/Layer2/ckpt/0115/layer2_pretrain.pt"
+
+# 其他
+tf32: true
+global_seed: 42
+results_dir: "/data1/chenyuxuan/checkpoint/layer2_stage2"
